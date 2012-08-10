@@ -4,3 +4,6 @@
 /.rvmrc
 /.jrubyrc
 /spec/spec_helper.rb
+/stderr.echoe
+/stdout.echoe
+/pkg

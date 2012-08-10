@@ -1,0 +1,13 @@
+Gemfile
+Gemfile.lock
+Guardfile
+Manifest
+README.md
+Rakefile
+config.yml.example
+lib/sapjco.rb
+ruby-sapjco.gemspec
+spec/sapjco/sapjco_spec.rb
+spec/spec_helper.rb
+stderr.echoe
+stdout.echoe

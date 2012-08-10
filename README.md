@@ -1,6 +1,6 @@
 # What is ruby-sapjco?
 
-It is a simple wrapper over the the top of SAP JCO Java interface.
+A simple wrapper over the the top of the SAP JCO Java API.
 
 # What do I need to use ruby-sapjco?
 
