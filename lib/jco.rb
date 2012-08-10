@@ -62,10 +62,14 @@ module Sap
             @destination = destination
         end
 
+        # Executes the SAP RFC.  Optionally: you can pass in a block that takes
+        # hash which can be used to set the import parameter list for thsi function 
+        # call.
         def execute 
 
             import_params = {}
-            yield(import_params)
+            table = {}
+            yield(import_params, table) if block_given?
 
             func = @destination.repository.get_function(@function_name.to_s)
 
@@ -79,21 +83,28 @@ module Sap
 
             func.execute @destination
 
-            out = parse_fields func.get_export_parameter_list
-    
+            out = parse_sap_record_structure func.get_export_parameter_list
+            out.merge!(parse_sap_record_structure(func.get_table_parameter_list))
             out
         end
 
-        def parse_fields(field_list)
+        # Recursively converts JCoRecord types to Ruby Hashes and Arrays (JCoTable instances).
+        def parse_sap_record_structure(field_list)
             out = Hash.new
             field_list.each do |field|
-                field.value.class.include?(com.sap.conn.jco.JCoStructure)
-                if  field.value.class.include?(com.sap.conn.jco.JCoStructure)
-                    out[field.name.to_sym] = parse_fields field.value 
+                if field.value.class.include?(com.sap.conn.jco.JCoTable) 
+                    table = field.get_table
+                    table_array = []
+                    begin
+                        table_array << parse_sap_record_structure(table)
+                    end while table.next_row
+                    out[field.name.to_sym] = table_array
+                elsif  field.value.class.include?(com.sap.conn.jco.JCoRecord)
+                    out[field.name.to_sym] = parse_sap_record_structure field.value 
                 else
                     out[field.name.to_sym] = field.value 
                 end
-            end
+            end unless field_list.nil?
             out
         end
     end
