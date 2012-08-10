@@ -62,24 +62,43 @@ module Sap
 			@destination = destination
 		end
 
-		def execute(import_params)
-			func = @destination.repository.get_function(@function_name)
+		def execute 
+
+			import_params = {}
+			yield(import_params)
+
+			func = @destination.repository.get_function(@function_name.to_s)
+
+			raise "RFC #{@function_name.to_s} is not available on the target system." if func.nil?
+
 			imp_list = func.get_import_parameter_list
 
-			import_params.each do |key, value|
-				imp_list.set_value(key, value)
+			import_params.each do |key, value|				
+				imp_list.set_value(key.to_s, value) 
 			end
 
 			func.execute @destination
 
-			itr = func.get_export_parameter_list.get_parameter_field_iterator
-
-			out = Hash.new
-			while itr.has_next_field
-				field = itr.next_parameter_field
-				out[field.name]=field.value
-			end
+			out = parse_fields func.get_export_parameter_list
+			# func.get_export_parameter_list.each do |field|
+			# 	field.value.class.include?(com.sap.conn.jco.JCoStructure)
+				
+			# 	out[field.name.to_sym]=field.value unless field.value.class.include?(com.sap.conn.jco.JCoStructure)
+			# end
 			
+			out
+		end
+
+		def parse_fields(field_list)
+			out = Hash.new
+			field_list.each do |field|
+				field.value.class.include?(com.sap.conn.jco.JCoStructure)
+				if  field.value.class.include?(com.sap.conn.jco.JCoStructure)
+					out[field.name.to_sym] = parse_fields field.value 
+				else
+					out[field.name.to_sym] = field.value 
+				end
+			end
 			out
 		end
 	end

@@ -1,3 +1,5 @@
 /config.yml
 /bin_stubs
 /.bundle
+/.rvmrc
+/.jrubyrc
