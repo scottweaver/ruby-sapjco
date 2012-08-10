@@ -3,3 +3,4 @@
 /.bundle
 /.rvmrc
 /.jrubyrc
+/spec/spec_helper.rb
