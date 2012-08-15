@@ -1,9 +1,8 @@
-# You must either add the directory where the sapjco3.jar resides to the load path or make sure
-# it is part of this environemnts classpath
-#$:.unshift(ENV['SAP_JCO_HOME'])
-
 require 'java'
 require 'yaml'
+require 'haml'
+require 'tempfile'
+require 'launchy'
 
 #First test if the classpath already includes the SAPJCO API
 begin
@@ -17,6 +16,7 @@ rescue Exception => e
     puts "SAPJCO loaded from environment variable: #{jco_path}"
 end
 
+require 'sap_assist.rb'
 
 module Sap
     ROOT = File.expand_path("../..", __FILE__)
@@ -78,6 +78,7 @@ module Sap
         def initialize(function_name, destination)
             @function_name = function_name
             @destination = destination
+            @func = @destination.repository.get_function(@function_name.to_s)
         end
 
         # Executes the SAP RFC.  Optionally: you can pass in a block that takes
@@ -89,22 +90,49 @@ module Sap
             table = {}
             yield(import_params, table) if block_given?
 
-            func = @destination.repository.get_function(@function_name.to_s)
+            raise "RFC #{@function_name.to_s} is not available on the target system." if @func.nil?
 
-            raise "RFC #{@function_name.to_s} is not available on the target system." if func.nil?
-
-            imp_list = func.get_import_parameter_list
+            imp_list = @func.get_import_parameter_list
 
             import_params.each do |key, value|              
                 imp_list.set_value(key.to_s, value) 
             end
 
-            func.execute @destination
+            @func.execute @destination
 
-            out = parse_sap_record_structure func.get_export_parameter_list
-            out.merge!(parse_sap_record_structure(func.get_table_parameter_list))
+            out = parse_sap_record_structure @func.get_export_parameter_list
+            out.merge!(parse_sap_record_structure(@func.get_table_parameter_list))
             out
         end
+
+        def metadata
+            out = {}
+            #out << @func.toXML
+            template = FunctionMetaData.new(@func)
+            out[:function]=template.name
+            out[:import_parameters]=template.import_params_info 
+            out[:export_parameters]=template.export_params_info 
+            out[:tables]=template.table_info
+            out
+        end
+
+        def help(open=false)
+            template = File.read("#{File.dirname(__FILE__)}/../templates/function_doc.haml")
+            engine = Haml::Engine.new(template)
+            html = engine.render Object.new, :metadata => metadata
+
+            if open
+                File.open("#{@function_name}.html", "w") do |file|
+                    file.write html   
+                    p "Help file path #{file.path}"
+                    Launchy.open(file.path)
+                end 
+            else
+                html
+            end
+                
+        end
+
 
         # Recursively converts JCoRecord types to Ruby Hashes and Arrays (JCoTable instances).
         def parse_sap_record_structure(field_list)
@@ -125,5 +153,52 @@ module Sap
             end unless field_list.nil?
             out
         end
+    end
+
+    class FunctionMetaData
+        
+        def initialize(function)
+           @template = function.get_function_template
+           @import_params = @template.get_import_parameter_list
+           @export_params = @template.get_export_parameter_list
+           @tables = @template.get_table_parameter_list
+        end
+
+        def name
+           @template.get_name 
+        end
+
+        def table_info
+            parse_parameters @tables
+        end
+
+        def import_params_info
+           
+            parse_parameters @import_params
+        end
+
+        def export_params_info
+            parse_parameters @export_params
+        end
+
+        def parse_parameters(parameter_list)
+            out = {}
+            parameter_list.each do |param|
+               info = {}
+               info[:type] = param.type
+               info[:description] = param.description
+               if param.fields?
+                    fields = {}
+                    info[:fields] = fields
+                    param.each do |column|
+                        fields[column.name.to_sym]={:type=>column.type, 
+                            :description=>column.description}
+                    end
+                end
+                out[param.name.to_sym]=info
+            end unless parameter_list.nil?
+            out
+        end
+
     end
 end

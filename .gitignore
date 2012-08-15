@@ -7,4 +7,5 @@
 /stderr.echoe
 /stdout.echoe
 /pkg
+/bin/*
 Manifest

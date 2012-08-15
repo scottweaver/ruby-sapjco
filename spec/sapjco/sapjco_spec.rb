@@ -2,6 +2,8 @@ require File.dirname(__FILE__) + "/../spec_helper.rb"
 
 require 'lib/sapjco'
 require "yaml"
+require 'ruby-debug'
+
 
 expectations = Expectations.new
 
@@ -33,7 +35,7 @@ describe Sap::RubyDestinationDataProvider do
         yaml_config = YAML::load(File.open(File.expand_path("../../..", __FILE__)+"/config.yml"))
         ddp = Sap::RubyDestinationDataProvider.new(yaml_config)
         props = ddp.get_destination_properties('test')
-        # You should define and Expectations class in your /spec/spec_helper to match what ever you
+        # You should define and Expectations class in your /spec/spec_metadataer to match what ever you
         # have in your /config.yml (which you also need to create)
        
         props.get('jco.client.ashost').should eq expectations[:ashost]
@@ -83,5 +85,29 @@ describe Sap::Function do
         out[:COMPANYCODE_LIST].class.should eq Array
         out[:COMPANYCODE_LIST][0][:COMP_CODE].should eq expectations[:company_code_0]        
     end
-    
+
+    it "should have metadata available" do
+        jco = Sap::Jco.new  
+        destination = jco.connect("test")
+        company_code_rfc =  Sap::Function.new(:BAPI_COMPANYCODE_GETLIST, destination)
+        p company_code_rfc.metadata.inspect
+
+
+        company_code_rfc.metadata[:function].should eq'BAPI_COMPANYCODE_GETLIST'
+        company_code_rfc.metadata[:import_parameters].length.should eq 0
+        company_code_rfc.metadata[:tables][:COMPANYCODE_LIST][:fields][:COMP_CODE][:type].should == 'CHAR'
+        company_code_rfc.metadata[:tables][:COMPANYCODE_LIST][:fields][:COMP_CODE][:description].should == 'Company Code'
+        company_code_rfc.metadata[:export_parameters][:RETURN][:type].should == 'STRUCTURE'
+        company_code_rfc.metadata[:export_parameters][:RETURN][:fields][:CODE][:type].should == 'CHAR'
+        #company_code_rfc[:tables]
+
+    end
+
+    it "should create html documentation" do
+        jco = Sap::Jco.new  
+        destination = jco.connect("test")
+        company_code_rfc =  Sap::Function.new(:BAPI_COMPANYCODE_GETLIST, destination)
+        company_code_rfc.help(true)
+        #Sap::Function.new(:Z_GET_PARTNER_INVOICES, destination).help true
+    end
 end
