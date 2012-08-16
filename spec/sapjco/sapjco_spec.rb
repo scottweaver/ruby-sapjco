@@ -90,7 +90,9 @@ describe Sap::Function do
         jco = Sap::Jco.new  
         destination = jco.connect("test")
         company_code_rfc =  Sap::Function.new(:BAPI_COMPANYCODE_GETLIST, destination)
+        sys_info_rfc =  Sap::Function.new(:RFC_SYSTEM_INFO, destination)
         p company_code_rfc.metadata.inspect
+        p sys_info_rfc.metadata.inspect
 
 
         company_code_rfc.metadata[:function].should eq'BAPI_COMPANYCODE_GETLIST'

@@ -47,8 +47,8 @@ module Sap
         
     end
     
-    # Create our own destination provider which convert our YAML config to a
-    # java.util.Properties instance that the JCoDestinationManager can user.
+    # Create our own destination provider which converts our YAML config to a
+    # java.util.Properties instance that the JCoDestinationManager can use.
     class RubyDestinationDataProvider
         include com.sap.conn.jco.ext.DestinationDataProvider
         
@@ -82,7 +82,7 @@ module Sap
         end
 
         # Executes the SAP RFC.  Optionally: you can pass in a block that takes
-        # hash which can be used to set the import parameter list for thsi function 
+        # a hash which can be used to set the import parameter list for this function 
         # call.
         def execute 
 
@@ -107,7 +107,6 @@ module Sap
 
         def metadata
             out = {}
-            #out << @func.toXML
             template = FunctionMetaData.new(@func)
             out[:function]=template.name
             out[:import_parameters]=template.import_params_info 
@@ -119,7 +118,7 @@ module Sap
         def help(open=false)
             template = File.read("#{File.dirname(__FILE__)}/../templates/function_doc.haml")
             engine = Haml::Engine.new(template)
-            html = engine.render Object.new, :metadata => metadata
+            html = engine.render DocumentationHelper.new, :metadata => metadata
 
             if open
                 File.open("#{@function_name}.html", "w") do |file|
@@ -200,5 +199,15 @@ module Sap
             out
         end
 
+    end
+
+    class DocumentationHelper
+   
+        def render(template_name, args)
+            template = File.read("#{File.dirname(__FILE__)}/../templates/#{template_name.to_s}.haml")
+            engine = Haml::Engine.new(template)
+            engine.render Object.new, args 
+        end
+        
     end
 end

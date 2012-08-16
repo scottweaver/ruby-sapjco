@@ -1,0 +1,24 @@
+-unless parameters.empty?
+	%h2= list_type
+
+	%table
+		%thead
+			%tr
+				%th Name
+				%th Type
+				%th Description
+
+		- parameters.each do |key, value|
+			%tr
+				%td{class: 'name'}= key.to_s
+				%td{class: 'type'}= value[:type]
+				%td{class: 'desc'}= value[:description]
+			-if type = 'STRUCTURE' || type = 'TABLE'
+				-s_name = key.to_s
+				-value[:fields].each do |key, value|
+					%tr{class: "for_#{s_name}"}
+						%td{class: 'name'}
+							%span{class: 'parent'}= "[#{s_name}] "
+							%span= key.to_s
+						%td{class: 'type'}= value[:type]
+						%td{class: 'desc'}= value[:description]
