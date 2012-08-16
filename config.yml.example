@@ -1,9 +1,0 @@
-jco.jar: "/usr/share/SAP/32bit/sapjco3.jar"
-
-test:
- jco.client.ashost: your.sap.server.com
- jco.client.sysnr: '1'
- jco.client.client: '000'
- jco.client.lang: EN
- jco.client.user: sap_user
- jco.client.passwd: sap_password

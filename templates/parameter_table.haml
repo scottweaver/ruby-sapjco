@@ -9,14 +9,15 @@
 				%th Description
 
 		- parameters.each do |key, value|
-			%tr
+			%tr{class: "#{value[:type].downcase}"}
 				%td{class: 'name'}= key.to_s
 				%td{class: 'type'}= value[:type]
 				%td{class: 'desc'}= value[:description]
-			-if type = 'STRUCTURE' || type = 'TABLE'
+			-if (value[:type] == 'STRUCTURE' || value[:type] == 'TABLE') 			    
 				-s_name = key.to_s
+				-puts key.to_s
 				-value[:fields].each do |key, value|
-					%tr{class: "for_#{s_name}"}
+					%tr{class: "for_#{s_name}, #{value[:type].downcase}"}
 						%td{class: 'name'}
 							%span{class: 'parent'}= "[#{s_name}] "
 							%span= key.to_s

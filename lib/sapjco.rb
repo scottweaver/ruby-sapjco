@@ -19,65 +19,64 @@ end
 require 'sap_assist.rb'
 
 module Sap
-    ROOT = File.expand_path("../..", __FILE__)
-    DEFAULT_CONFIG = YAML::load(File.open(ROOT+"/config.yml"))    
-    java_import com.sap.conn.jco.ext.Environment
-    java_import com.sap.conn.jco.JCo
-    java_import java.util.Properties
-    
-    def self.configure(config_path)
-        yaml=  YAML::load(File.open(config_path))
-    end
-       
-    class Jco
-        def initialize(config=Sap::DEFAULT_CONFIG)
-            if(!Environment.destination_data_provider_registered?)
-                @@ddp = RubyDestinationDataProvider.new(config)
-                Environment.register_destination_data_provider(@@ddp)
-            end
-        end
-    
-        def destination_data_provider
-            @@ddp
-        end
-    
-        def connect(destination_name)
-            JCo.destination_manager.get_destination_instance(destination_name, nil)
-        end
-        
-    end
-    
-    # Create our own destination provider which converts our YAML config to a
-    # java.util.Properties instance that the JCoDestinationManager can use.
-    class RubyDestinationDataProvider
-        include com.sap.conn.jco.ext.DestinationDataProvider
-        
-        def initialize(yaml)
-            @yaml=yaml 
-        end
-    
-        def get_destination_properties(destination_name)
-            props = Properties.new
-            @yaml[destination_name].each do |key, value|
-                props.put(key,value)
-            end
-            props
-        end
-    
-        def supports_events()
-            false
-        end
-    
-        def set_destination_data_event_listener=(eventListener)
-    
-        end
-    end
-    
-    class Function
+    module Configuration
+        java_import com.sap.conn.jco.ext.Environment
 
-        def initialize(function_name, destination)
+        def self.configure(configuration=nil)
+            # configure "by hand"
+            if block_given?
+                @@configuration = {}
+                yield @@configuration
+            elsif configuration
+                @@configuration = configuration
+            else
+                config_path = ENV['SAPJCO_CONFIG'] || 'config/sapjco.yml'
+                puts "Configuring SAPJCo from #{config_path}."
+                @@configuration =  YAML::load(File.open(config_path))
+            end
+    
+            if(!Environment.destination_data_provider_registered?)
+                destination_data_provider = RubyDestinationDataProvider.new(@@configuration)
+                Environment.register_destination_data_provider(destination_data_provider)
+            end
+        end
+
+        def self.configuration
+           @@configuration 
+        end
+
+        # Create our own destination provider which converts our YAML config to a
+        # java.util.Properties instance that the JCoDestinationManager can use.
+        class RubyDestinationDataProvider
+            include com.sap.conn.jco.ext.DestinationDataProvider
+            java_import java.util.Properties
+            
+            def initialize(configuration)
+                @destinations=configuration['destinations'] 
+            end
+        
+            def get_destination_properties(destination_name)
+                props = Properties.new
+                @destinations[destination_name.to_s].each do |key, value|
+                    props.put(key,value)
+                end
+                props
+            end
+        
+            def supports_events()
+                false
+            end
+        
+            def set_destination_data_event_listener=(eventListener)
+        
+            end
+        end
+    end
+
+    class Function
+        def initialize(function_name, destination_name)
             @function_name = function_name
-            @destination = destination
+            @destination = com.sap.conn.jco.JCoDestinationManager.get_destination destination_name.to_s
             @func = @destination.repository.get_function(@function_name.to_s)
         end
 
