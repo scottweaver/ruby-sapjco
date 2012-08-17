@@ -71,6 +71,8 @@ describe Sap::Function do
         company_code_rfc.metadata[:export_parameters][:RETURN][:fields][:CODE][:type].should == 'CHAR'
         #company_code_rfc[:tables]
 
+        PP.pp(Sap::Function.new(:Z_DISPLAY_CUSTOMERS, :test).metadata)
+
     end
 
     it "should create html documentation" do

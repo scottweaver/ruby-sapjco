@@ -1,7 +1,7 @@
 require 'rake'
 require 'echoe'
 
-Echoe.new('ruby-sapjco', '0.0.2') do |p|
+Echoe.new('ruby-sapjco', '0.0.4') do |p|
   p.description    = "A simple wrapper over the the top of the SAP JCO Java API."
   p.url            = "https://github.com/scottweaver/ruby-sapjco"
   p.author         = "Scott T Weaver"

@@ -28,8 +28,14 @@ module Sap
                     @name = parent_metadata.get_name index ;
                     @metadata = parent_metadata.get_record_meta_data index
                     @type = parent_metadata.get_type_as_string index 
-                    @description = parent_metadata.get_description index 
+                    @description = parent_metadata.get_description index
+                    
+                   # @import =  parent_metadata.is_import(index) if parent_metadata.respond_to?(:is_import)
                 end
+
+                # def import?
+                #     @import
+                # end
 
                 def fields?
                     !@metadata.nil? && @metadata.get_field_count > 0

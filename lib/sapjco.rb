@@ -6,14 +6,18 @@ require 'launchy'
 
 #First test if the classpath already includes the SAPJCO API
 begin
-    java_import com.sap.conn.jco.ext.Environment
-    puts "SAPJCO loaded from classpath"
-rescue Exception => e
-#If not, load it from the environment
-    jco_path = ENV['SAP_JCO_HOME']
-    $:.unshift(jco_path)
     require 'sapjco3.jar'
-    puts "SAPJCO loaded from environment variable: #{jco_path}"
+    java_import com.sap.conn.jco.ext.Environment
+    puts "sapjco3.jar successfuly loaded!"
+rescue Exception => e
+    raise( <<-eos 
+The sapjco3.jar could not be located on the classpath.  Either:
+ - (easiest) Add it to you CLASSPATH environment variable.
+ - Make sure it is part of the classpath of the JVM running JRuby.
+ - (best) Create a ruby that contains the 'sapjco3.jar' in the /lib directory 
+   and install the gem locally.
+ eos
+    ) 
 end
 
 require 'sap_assist.rb'
@@ -185,6 +189,7 @@ module Sap
                info = {}
                info[:type] = param.type
                info[:description] = param.description
+               #info[:import?] = param.import?
                if param.fields?
                     fields = {}
                     info[:fields] = fields

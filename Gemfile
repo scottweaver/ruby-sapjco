@@ -4,6 +4,7 @@ gem 'rspec'
 gem 'haml'
 gem 'launchy'
 gem 'sass'
+gem 'plm-java-gems'
 
 group :test do 
 	gem 'guard-rspec'

@@ -27,6 +27,7 @@ GEM
       rb-fchange (~> 0.0.5)
       rb-fsevent (~> 0.9.1)
       rb-inotify (~> 0.8.8)
+    plm-java-gems (1.0.0)
     rb-fchange (0.0.5)
       ffi
     rb-fsevent (0.9.1)
@@ -60,6 +61,7 @@ DEPENDENCIES
   haml
   launchy
   libnotify
+  plm-java-gems
   rb-inotify
   rspec
   ruby-debug
