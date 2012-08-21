@@ -10,19 +10,17 @@ begin
     java_import com.sap.conn.jco.ext.Environment
     puts "sapjco3.jar successfuly loaded!"
 rescue Exception => e
-    raise( <<-eos 
+    raise( %q{
 The sapjco3.jar could not be located on the classpath.  Either:
  - (easiest) Add it to you CLASSPATH environment variable.
  - Make sure it is part of the classpath of the JVM running JRuby.
  - (best) Create a ruby that contains the 'sapjco3.jar' in the /lib directory 
-   and install the gem locally.
- eos
-    ) 
+   and install the gem locally.})
 end
 
 require 'sap_assist.rb'
 
-module Sap
+module SapJCo
     module Configuration
         java_import com.sap.conn.jco.ext.Environment
 
