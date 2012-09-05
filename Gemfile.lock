@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ruby-sapjco (0.0.5)
+    ruby-sapjco (0.0.7)
       haml
       launchy
       plm-java-gems

@@ -55,6 +55,10 @@ module SapJCo
             
             def initialize(configuration)
                 @destinations=configuration['destinations'] 
+                p "Available destinations"
+                @destinations.each do |key, value|
+                    p key
+                end
             end
         
             def get_destination_properties(destination_name)
@@ -76,7 +80,7 @@ module SapJCo
     end
 
     class Function
-        def initialize(function_name, destination_name)
+        def initialize(function_name, destination_name=SapJCo::Configuration::DEFAULT_DESTINATION)
             @function_name = function_name
             @destination = com.sap.conn.jco.JCoDestinationManager.get_destination destination_name.to_s
             @func = @destination.repository.get_function(@function_name.to_s)

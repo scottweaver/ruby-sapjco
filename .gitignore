@@ -10,3 +10,4 @@
 /bin/*
 Manifest
 /*.html
+bundler_stubs/
