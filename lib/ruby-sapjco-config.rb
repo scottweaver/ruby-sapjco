@@ -28,6 +28,7 @@ module SapJCo
                     @@configuration.merge!(configuration)
                else
                     @@configuration = configuration
+                    LoggingFacade::Logger.logger.warn "No configuration file could be located so defaulting to empty configuration."
                end
 
 
@@ -50,7 +51,11 @@ module SapJCo
 
                def initialize(configuration)
                     @destinations=configuration['destinations']
-                    logger.info "Available SAP app server destinations: #{@destinations.keys.join(', ')}."
+                    if(@destinations)
+                      logger.info "Available SAP app server destinations: #{@destinations.keys.join(', ')}." 
+                    else
+                      raise "Your configuration appears to be empty or at the very least has no destinations defined."
+                    end
                end
 
                def get_destination_properties(destination_name)
