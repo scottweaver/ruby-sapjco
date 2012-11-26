@@ -15,3 +15,4 @@ bundler_stubs/
 coverage/
 config/sapjco.yml.example.orig
 *.orig
+config/sapjco.yml
