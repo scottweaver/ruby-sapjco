@@ -1,2 +1,17 @@
+/**/sapjco.yml
+/bin_stubs
+/.bundle
+/.rvmrc
+/.jrubyrc
+/spec/spec_helper.rb
+/stderr.echoe
+/stdout.echoe
+/pkg
+/bin/*
+Manifest
+/*.html
+bundler_stubs/
 /*.trc
 coverage/
+config/sapjco.yml.example.orig
+*.orig
