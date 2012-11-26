@@ -1,0 +1,12 @@
+%html
+	%head
+		:css
+			body {font-family: Helvetica;}
+			td.name, td.type { padding-right: 1em;}
+			.table td.name {font-weight: bold; font-size:1.25em}
+	%body
+		%h1{:id => 'function_name'}=  metadata[:function]
+
+		= render :parameter_table, parameters: metadata[:import_parameters], list_type: 'Import Parameters'
+		= render :parameter_table, parameters: metadata[:export_parameters], list_type: 'Export Parameters'
+		= render :parameter_table, parameters: metadata[:tables], list_type: 'Tables'

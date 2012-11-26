@@ -1,0 +1,27 @@
+
+destinations:
+ test:
+  jco.client.ashost: your.sap.server.com
+  jco.client.sysnr: '1'
+  jco.client.client: '000'
+  jco.client.lang: EN
+  jco.client.user: sap_user
+  jco.client.passwd: sap_password
+  jco.destination.peak_limit: 30                  # Maximum number of active connections that can be created for a destination simultaneously
+  jco.destination.pool_capacity: 15               # Maximum number of idle connections kept open by the destination. A value of 0 has the effect that there is no connection pooling, i.e. connections will be closed after each request.
+  jco.destination.expiration_time: 60000          # Time in ms after that the connections hold by the internal pool can be closed
+  jco.destination.expiration_check_period:30000   # Interval in ms with which the timeout checker thread checks the connections in the pool for expiration
+  jco.destination.max_get_client_time: 5000       # Max time in ms to wait for a connection, if the max allowed number of connections is allocated by the application
+
+ production:
+  jco.client.ashost: your.sap.server.com
+  jco.client.sysnr: '1'
+  jco.client.client: '000'
+  jco.client.lang: EN
+  jco.client.user: sap_user
+  jco.client.passwd: sap_password
+  jco.destination.peak_limit: 30
+  jco.destination.pool_capacity: 15
+  jco.destination.expiration_time: 60000
+  jco.destination.expiration_check_period:30000
+  jco.destination.max_get_client_time: 5000
