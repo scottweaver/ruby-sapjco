@@ -4,9 +4,6 @@ require 'ruby-sapjco-config'
 require 'ruby-sapjco-function'
 require "yaml"
 
-SapJCo::Configuration.configure default_destination: :test
-expectations = Expectations.new
-
 describe SapJCo::Function do
 
     it "should convert ugly SAPJCO Java structs into beautimous Ruby ones" do
@@ -32,7 +29,7 @@ describe SapJCo::Function do
 
         out = func.execute 
         out[:COMPANYCODE_LIST].class.should eq Array
-        out[:COMPANYCODE_LIST][0][:COMP_CODE].should eq expectations[:company_code_0]        
+        out[:COMPANYCODE_LIST][0][:COMP_CODE].should eq EXPECTATIONS[:company_code_0]        
     end
 
     it "should have metadata available" do

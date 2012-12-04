@@ -15,7 +15,7 @@ module SapJCo
 
         def initialize(destination_name)
             @failed = false
-            @destination_name = destination_name
+            @destination_name = destination_name            
             @original_destination = JCoDestinationManager.get_destination @destination_name.to_s
             @active_destination = @original_destination
         end

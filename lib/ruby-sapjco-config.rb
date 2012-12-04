@@ -25,7 +25,7 @@ module SapJCo
                if File.exists? config_path
                     LoggingFacade::Logger.logger.info "Configuring SAPJCo from #{File.expand_path(config_path)}."
                     @@configuration =  YAML::load(File.open(config_path))
-                    @@configuration.merge!(configuration)
+                    @@configuration.merge!(configuration)                    
                else
                     @@configuration = configuration
                     LoggingFacade::Logger.logger.warn "No configuration file could be located so defaulting to empty configuration."
@@ -60,6 +60,7 @@ module SapJCo
 
                def get_destination_properties(destination_name)
                     props = Properties.new
+                    raise "Destination '#{destination_name}' is not defined in your configuration." unless @destinations.include? destination_name.to_s
                     @destinations[destination_name.to_s].each do |key, value|
                          props.put(key,value)
                     end
