@@ -1,6 +1,9 @@
 require 'ruby-sapjco'
 require 'ruby-sapjco-config'
+require 'ruby-sapjco-assist'
 require 'logging-facade'
+require 'haml'
+require 'launchy'
 
 module SapJCo
   class Function

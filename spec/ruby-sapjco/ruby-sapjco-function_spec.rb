@@ -1,6 +1,5 @@
-require File.dirname(__FILE__) + "/../spec_helper.rb"
+require_relative "../spec_helper.rb"
 
-require 'ruby-sapjco-config'
 require 'ruby-sapjco-function'
 require "yaml"
 

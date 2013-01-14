@@ -1,14 +1,14 @@
-require File.dirname(__FILE__) + "/../spec_helper.rb"
+require_relative "../spec_helper.rb"
 
 require 'ruby-sapjco-config'
 require 'ruby-sapjco-function'
 require "yaml"
 
 
-describe SapJCo::Configuration::RubyDestinationDataProvider do
+describe SapJCo::RubyDestinationDataProvider do
 
   it "should convert YAML to java.util.Properties" do
-    ddp = SapJCo::Configuration::RubyDestinationDataProvider.new(SapJCo::Configuration.configuration)
+    ddp = SapJCo::RubyDestinationDataProvider.new(SapJCo::Configuration.configuration)
     props = ddp.get_destination_properties('test')
     # You should define an Expectations class in your /spec/spec_metadata to match what ever you
     # have in your /config.yml (which you also need to create)

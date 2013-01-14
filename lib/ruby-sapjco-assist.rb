@@ -1,8 +1,5 @@
 # Need makes sure the SAP implementations are loaded before we attempt to
 # open then.
-java_import Java::ComSapConnJcoRt::DefaultListMetaData
-java_import Java::ComSapConnJcoRt::DefaultRecordMetaData
-
 module Sap
   module Assist
     module MetaData

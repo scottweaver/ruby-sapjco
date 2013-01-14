@@ -1,5 +1,5 @@
 module Ruby
   module Sapjco
-    VERSION = "1.0.10"
+    VERSION = "1.1.11"
   end
 end
