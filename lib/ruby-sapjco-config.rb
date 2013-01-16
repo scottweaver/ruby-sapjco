@@ -1,5 +1,5 @@
 require 'logging-facade'
-require 'ruby-sapjco'
+require 'ruby-sapjco-env'
 
 module SapJCo
   class Configuration
