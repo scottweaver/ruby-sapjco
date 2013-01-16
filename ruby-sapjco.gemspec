@@ -14,7 +14,6 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'haml' 
   gem.add_dependency 'launchy'
-  gem.add_dependency 'plm-java-gems'
   gem.add_dependency 'logging-facade'
   
 
@@ -24,7 +23,6 @@ Gem::Specification.new do |gem|
   # gem.add_development_dependency('libnotify')
   gem.add_development_dependency('haml')
   gem.add_development_dependency('launchy')
-  gem.add_development_dependency('plm-java-gems')
   gem.add_development_dependency('simplecov')
   
   
