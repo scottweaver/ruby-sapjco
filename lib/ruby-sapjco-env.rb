@@ -1,9 +1,18 @@
 require 'java'
 require 'logging-facade'
 
-#Begin by testing to see if SAPJCo is available in the class path.
+#First, we will see if the sapjco3.jar is in the $LOAD_PATH
 begin
-  require 'sapjco3.jar'
+  require 'sapjco3.jar'  
+  LoggingFacade::Logger.info "sapjco3.jar was successfuly found on the LOAD_PATH"
+rescue LoadError => e
+  LoggingFacade::Logger.logger.info "sapjco3.jar was not on the LOAD_PATH.  
+  Don't worry this message if you have added sapcjo3.jar into the classpath
+  already."
+end
+
+#Begin by testing to see if SAPJCo is available in the class path.
+begin  
   java_import com.sap.conn.jco.ext.Environment
   java_import Java::ComSapConnJcoRt::DefaultListMetaData
   java_import Java::ComSapConnJcoRt::DefaultRecordMetaData
