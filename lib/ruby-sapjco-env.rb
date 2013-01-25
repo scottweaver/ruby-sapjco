@@ -7,8 +7,8 @@ begin
   LoggingFacade::Logger.info "sapjco3.jar was successfuly found on the LOAD_PATH"
 rescue LoadError => e
   LoggingFacade::Logger.logger.info "sapjco3.jar was not on the LOAD_PATH.  
-  Don't worry this message if you have added sapcjo3.jar into the classpath
-  already."
+  You can ignore this message if you have added sapcjo3.jar into the classpath
+  already through some other means."
 end
 
 #Begin by testing to see if SAPJCo is available in the class path.
