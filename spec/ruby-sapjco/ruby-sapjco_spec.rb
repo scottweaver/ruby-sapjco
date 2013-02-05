@@ -8,7 +8,7 @@ describe SapJCo::RubyDestinationDataProvider do
   it "should convert YAML to java.util.Properties" do
     ddp = SapJCo::RubyDestinationDataProvider.new(SapJCo::Configuration.configuration)
     props = ddp.get_destination_properties('test')
-    # You should define an Expectations class in your /spec/spec_metadata to match what ever you
+    # You should define an Expectations class in your /spec/spec_helper.rb to match what ever you
     # have in your /config.yml (which you also need to create)
 
     props.get('jco.client.ashost').should eq EXPECTATIONS[:ashost]
@@ -42,13 +42,34 @@ describe SapJCo::Function do
     out[:RFCSI_EXPORT][:RFCHOST2].should eq 'saperqapp1'
   end
 
-  it "should handle tables correctly" do
+  it "should handle output tables correctly" do
     func =  SapJCo::Function.new(:BAPI_COMPANYCODE_GETLIST)
 
     out = func.execute
     out[:COMPANYCODE_LIST].class.should eq Array
     out[:COMPANYCODE_LIST][0][:COMP_CODE].should eq EXPECTATIONS[:company_code_0]
   end
+
+  it "should handle input tables correctly" do
+    func =  SapJCo::Function.new(:Z_CUSTOMER_BY_BUSINESS_PARTNER)
+
+    out = func.execute do |params, tables|
+      tables[:CUST_QUERY_DATA]=[{:INSTALL => '0001037873'}]
+    end
+
+    expect(out[:CUST_DATA_OUT].length).to eq(1)    
+    expect(out[:CUST_DATA_OUT][0][:REGION]).to eq 'NSW'
+    expect(out[:CUST_DATA_OUT][0][:COUNTRY]).to eq 'AU'
+
+    expect(out[:CUST_PARTNER_OUT].length).to eq(10)    
+    expect(out[:CUST_PARTNER_OUT][5][:BUS_PARTNER_TYPE]).to eq("WE")
+    expect(out[:CUST_PARTNER_OUT][5][:SALES_ORG]).to eq("1510")
+
+    expect(out[:CUST_SALES_OUT].length).to eq(1)    
+    expect(out[:CUST_SALES_OUT][0][:CUST_GROUP]).to eq("00")
+    expect(out[:CUST_SALES_OUT][0][:SALES_GROUP]).to eq("062")
+  end
+
 
   it "should have metadata available" do
     company_code_rfc =  SapJCo::Function.new(:BAPI_COMPANYCODE_GETLIST)
@@ -68,6 +89,10 @@ describe SapJCo::Function do
     company_code_rfc.help true
     install_config = SapJCo::Function.new(:Z_INSTALL_CONFIG)
     install_config.help true
+    sysinfo =  SapJCo::Function.new(:RFC_SYSTEM_INFO)
+    sysinfo.help true
+    cust_data =  SapJCo::Function.new(:Z_CUSTOMER_BY_BUSINESS_PARTNER)
+    cust_data.help true
   end
 
   it "should support failing over to an alternate server" do
