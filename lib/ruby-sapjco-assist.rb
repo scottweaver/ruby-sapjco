@@ -30,10 +30,6 @@ module Sap
           # @import =  parent_metadata.is_import(index) if parent_metadata.respond_to?(:is_import)
         end
 
-        # def import?
-        #     @import
-        # end
-
         def fields?
           !@metadata.nil? && @metadata.get_field_count > 0
         end

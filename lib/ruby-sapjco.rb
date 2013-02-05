@@ -27,11 +27,24 @@ module SapJCo
       raise "RFC #{@function_name.to_s} is not available on the target system." if @func.nil?
 
       imp_list = @func.get_import_parameter_list
+      table_list = @func.get_table_parameter_list
 
       import_params.each do |key, value|
         imp_list.set_value(key.to_s, value)
       end
 
+      table.each do |key, value|
+        a_table = table_list.get_table key.to_s    
+        raise "No such input table #{key.to_s} found for RFC #{@function_name.to_s}" if !a_table           
+        value.each do |row|
+          a_table.append_row          
+          row.each do |key, value|
+            a_table.set_value(key.to_s, value)  
+          end            
+        end
+        
+      end
+      
       @func.execute @destination_assistant.destination
 
       out = parse_sap_record_structure @func.get_export_parameter_list
