@@ -9,4 +9,4 @@ A simple wrapper over the the top of the SAP JCO Java API.
 
 # How do I use it?
 
-Well, it ruby-sapjco is in very early alpha, though it is able to call SAP RFCs and return data.  The configuration needs to be improved.  For now, take a look at the spec file to get an idea how to use it.
+Please refer to the [wiki](https://github.com/scottweaver/ruby-sapjco/wiki) for usage and code examples.
