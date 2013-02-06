@@ -15,41 +15,21 @@ module SapJCo
       @func = @destination_assistant.destination.repository.get_function(@function_name.to_s)
     end
 
-
     # Executes the SAP RFC.  Optionally: you can pass in a block that takes
     # a hash which can be used to set the import parameter list for this function
     # call.
-    def execute
-      import_params = {}
-      table = {}
-      yield(import_params, table) if block_given?
-
+    def execute(import_parameters = {}, table_parameters = {})
       raise "RFC #{@function_name.to_s} is not available on the target system." if @func.nil?
 
-      imp_list = @func.get_import_parameter_list
-      table_list = @func.get_table_parameter_list
+      yield(import_parameters, table_parameters) if block_given?
 
-      import_params.each do |key, value|
-        imp_list.set_value(key.to_s, value)
-      end
+      hash_into_jco_record(import_parameters, @func.get_import_parameter_list)
 
-      table.each do |key, value|
-        a_table = table_list.get_table key.to_s    
-        raise "No such input table #{key.to_s} found for RFC #{@function_name.to_s}" if !a_table           
-        value.each do |row|
-          a_table.append_row          
-          row.each do |key, value|
-            a_table.set_value(key.to_s, value)  
-          end            
-        end
-        
-      end
+      hash_into_jco_table(table_parameters, @func.get_table_parameter_list)
       
       @func.execute @destination_assistant.destination
 
-      out = parse_sap_record_structure @func.get_export_parameter_list
-      out.merge!(parse_sap_record_structure(@func.get_table_parameter_list))
-      out
+      format_jco_response(@func)
     end
 
     def metadata
@@ -67,18 +47,19 @@ module SapJCo
       engine = Haml::Engine.new(template)
       html = engine.render DocumentationHelper.new, :metadata => metadata
 
-      if open
-        File.open("#{@function_name}.html", "w") do |file|
-          file.write html
-          logger.info "Help file path #{file.path}"
-          Launchy.open(file.path)
-        end
-      else
-        html
+      File.open("#{@function_name}.html", "w") do |file|
+        file.write html
+        logger.info "Help file path #{file.path}"        
       end
 
+      if open
+        Launchy.open(file.path)
+      end
+
+      html
     end
 
+    private
 
     # Recursively converts JCoRecord types to Ruby Hashes and Arrays (JCoTable instances).
     def parse_sap_record_structure(field_list)
@@ -97,6 +78,29 @@ module SapJCo
           out[field.name.to_sym] = field.value
         end
       end unless field_list.nil?
+      out
+    end
+    
+    def hash_into_jco_record(hash, jco_record)
+      hash.each do |key, value|
+        jco_record.set_value(key.to_s, value)
+      end
+    end
+
+    def hash_into_jco_table(hash, jco_parameter_list)
+      hash.each do |key, value|
+        jco_table = jco_parameter_list.get_table key.to_s    
+        raise "No such input table #{key.to_s} exists." if !jco_table           
+        value.each do |row|
+          jco_table.append_row          
+          hash_into_jco_record(row, jco_table)  
+        end        
+      end      
+    end
+
+    def format_jco_response(rfc)
+      out = parse_sap_record_structure rfc.get_export_parameter_list
+      out.merge!(parse_sap_record_structure(rfc.get_table_parameter_list))
       out
     end
   end
