@@ -20,6 +20,8 @@ module SapJCo
       if(!Environment.destination_data_provider_registered?)
         destination_data_provider = RubyDestinationDataProvider.new(@@configuration)
         Environment.register_destination_data_provider(destination_data_provider)
+      else
+        LoggingFacade::Logger.logger.warn("!!!A SAPJCo destination provider is already registered!!!!")
       end
       @@configuration
     end

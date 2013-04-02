@@ -7,7 +7,7 @@ GIT
 PATH
   remote: .
   specs:
-    ruby-sapjco (1.4.0)
+    ruby-sapjco (1.5.0)
       haml
       launchy
       logging-facade
